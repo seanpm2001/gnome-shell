@@ -1283,7 +1283,7 @@ var LoginDialog = GObject.registerClass({
 
         this.opacity = 0;
 
-        Main.pushModal(this, { actionMode: Shell.ActionMode.LOGIN_SCREEN });
+        this._grab = Main.pushModal(this, { actionMode: Shell.ActionMode.LOGIN_SCREEN });
 
         this.ease({
             opacity: 255,
@@ -1295,7 +1295,8 @@ var LoginDialog = GObject.registerClass({
     }
 
     close() {
-        Main.popModal(this);
+        Main.popModal(this._grab);
+        this._grab = null;
         Main.ctrlAltTabManager.removeGroup(this);
     }
 

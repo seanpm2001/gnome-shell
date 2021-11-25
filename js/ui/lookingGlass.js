@@ -1335,9 +1335,13 @@ class LookingGlass extends St.BoxLayout {
         if (this._open)
             return;
 
-        if (!Main.pushModal(this, { actionMode: Shell.ActionMode.LOOKING_GLASS }))
+        let grab = Main.pushModal(this, { actionMode: Shell.ActionMode.LOOKING_GLASS });
+        if (grab.get_windowing_state() === Clutter.GrabState.NONE) {
+            Main.popModal(grab);
             return;
+        }
 
+        this._grab = grab;
         this._notebook.selectIndex(0);
         this.show();
         this._open = true;
@@ -1377,7 +1381,8 @@ class LookingGlass extends St.BoxLayout {
             duration,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
-                Main.popModal(this);
+                Main.popModal(this._grab);
+                this._grab = null;
                 this.hide();
             },
         });
